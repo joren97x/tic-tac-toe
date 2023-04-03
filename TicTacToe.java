@@ -232,18 +232,17 @@ public class TicTacToe implements ActionListener {
             }
         }
 
-        if(e.getSource() == menuButton[1]){
-            System.exit(0);
-        }
-
         if(e.getSource() == menuButton[0]) {
             for(int i = 0; i < 9; i++) {
                 button[i].setText("");
             }
             menu.setVisible(false);
             panel.setVisible(true); 
-            this.x = 0;
             announcer.setText("X's turn");
+        }
+
+        if(e.getSource() == menuButton[1]){
+            System.exit(0);
         }
         
         if((button[0].getText()+button[3].getText().concat(button[6].getText())).equals("XXX")
@@ -251,6 +250,7 @@ public class TicTacToe implements ActionListener {
             announcer.setText(button[0].getText()+" WINS!");
             panel.setVisible(false);
             menu.setVisible(true);
+            this.x = 0;
             if(button[0].getText().equals("X")){
                 int score = Character.getNumericValue(Xscore.getText().charAt(3));
                 score++;
@@ -267,6 +267,7 @@ public class TicTacToe implements ActionListener {
             announcer.setText(button[1].getText()+" WINS!");
             panel.setVisible(false);
             menu.setVisible(true);
+            this.x = 0;
             if(button[1].getText().equals("X")){
                 int score = Character.getNumericValue(Xscore.getText().charAt(3));
                 score++;
@@ -283,6 +284,7 @@ public class TicTacToe implements ActionListener {
             announcer.setText(button[2].getText()+" WINS!");
             panel.setVisible(false);
             menu.setVisible(true);
+            this.x = 0;
             if(button[2].getText().equals("X")){
                 int score = Character.getNumericValue(Xscore.getText().charAt(3));
                 score++;
@@ -299,6 +301,7 @@ public class TicTacToe implements ActionListener {
             announcer.setText(button[0].getText()+" WINS!");
             panel.setVisible(false);
             menu.setVisible(true);
+            this.x = 0;
             if(button[0].getText().equals("X")){
                 int score = Character.getNumericValue(Xscore.getText().charAt(3));
                 score++;
@@ -315,6 +318,7 @@ public class TicTacToe implements ActionListener {
             announcer.setText(button[3].getText()+" WINS!");
             panel.setVisible(false);
             menu.setVisible(true);
+            this.x = 0;
             if(button[3].getText().equals("X")){
                 int score = Character.getNumericValue(Xscore.getText().charAt(3));
                 score++;
@@ -331,6 +335,7 @@ public class TicTacToe implements ActionListener {
             announcer.setText(button[6].getText()+" WINS!");
             panel.setVisible(false);
             menu.setVisible(true);
+            this.x = 0;
             if(button[6].getText().equals("X")){
                 int score = Character.getNumericValue(Xscore.getText().charAt(3));
                 score++;
@@ -347,6 +352,7 @@ public class TicTacToe implements ActionListener {
             announcer.setText(button[0].getText()+" WINS!");
             panel.setVisible(false);
             menu.setVisible(true);
+            this.x = 0;
             if(button[0].getText().equals("X")){
                 int score = Character.getNumericValue(Xscore.getText().charAt(3));
                 score++;
@@ -363,6 +369,7 @@ public class TicTacToe implements ActionListener {
             announcer.setText(button[6].getText()+" WINS!");
             panel.setVisible(false);
             menu.setVisible(true);
+            this.x = 0;
             if(button[6].getText().equals("X")){
                 int score = Character.getNumericValue(Xscore.getText().charAt(3));
                 score++;
@@ -373,6 +380,13 @@ public class TicTacToe implements ActionListener {
                 score++;
                 Oscore.setText("O: "+Integer.toString(score));
             }
+        }
+
+        if(this.x == 9){
+            announcer.setText("DRAW!");
+            panel.setVisible(false);
+            menu.setVisible(true);
+            this.x = 0;
         }
         
 
