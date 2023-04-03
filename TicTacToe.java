@@ -4,6 +4,7 @@ import java.awt.GridLayout;
 import java.awt.event.*;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -11,6 +12,7 @@ public class TicTacToe implements ActionListener {
 
     JFrame frame;
     JTextField winner;
+    JLabel scoreboard, Xscore, Oscore;
     JButton[] button = new JButton[9];
     JPanel panel;
     Font font = new Font("Monospaced", Font.BOLD, 30);
@@ -20,11 +22,23 @@ public class TicTacToe implements ActionListener {
 
         frame = new JFrame("TicTacToe");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(450,440);
+        frame.setSize(450,550);
         frame.setLayout(null);
 
+        scoreboard = new JLabel("scoreboard");
+        scoreboard.setFont(font);
+        scoreboard.setBounds(110, -80, 400, 200);
+
+        Xscore = new JLabel("X: ");
+        Xscore.setFont(font);
+        Xscore.setBounds(40, -35, 100, 200);
+
+        Oscore = new JLabel("O: ");
+        Oscore.setFont(font);
+        Oscore.setBounds(270, -35, 100, 200);
+
         winner = new JTextField();
-        winner.setBounds(160,365,200,30);
+        winner.setBounds(160,450,200,30);
         winner.setEditable(false);
         winner.setText("HELLO");
         winner.setFont(font);
@@ -36,7 +50,7 @@ public class TicTacToe implements ActionListener {
         }
 
         panel = new JPanel();
-        panel.setBounds(20,20,390,345);
+        panel.setBounds(20,100,390,345);
         panel.setBackground(new Color(100,200,50));
         panel.setLayout(new GridLayout(3,3,2,2));
         
@@ -46,6 +60,9 @@ public class TicTacToe implements ActionListener {
 
         frame.add(panel);
         frame.add(winner);
+        frame.add(scoreboard);
+        frame.add(Xscore);
+        frame.add(Oscore);
         frame.setVisible(true);
     }
 
@@ -55,13 +72,22 @@ public class TicTacToe implements ActionListener {
         
         for(int i = 0; i <= 8; i++) {
             if(x%2==0 && e.getSource() == button[i]){
-                button[i].setText("X");
+                if(button[i].getText().equals("X") || button[i].getText().equals("O")) {
+                }
+                else {
+                    button[i].setText("X");
+                    this.x++;
+                }
             }
             if(x%2!=0 && e.getSource() == button[i]){
-                button[i].setText("O");
+                if(button[i].getText().equals("X") || button[i].getText().equals("O")) {
+                }
+                else {
+                    button[i].setText("O");
+                 this.x++;
+                }
             }
         }
-        this.x++;
         
         if((button[0].getText()+button[3].getText().concat(button[6].getText())).equals("XXX")
         || (button[0].getText()+button[3].getText().concat(button[6].getText())).equals("OOO")) {
