@@ -13,49 +13,60 @@ public class TicTacToe implements ActionListener {
     JButton[] button = new JButton[9];
     JPanel panel;
     Font font = new Font("Monospaced", Font.BOLD, 30);
+    int x = 0;
 
     TicTacToe() {
 
         frame = new JFrame("TicTacToe");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(450,440);
-        frame.setVisible(true);
-        frame.setBackground(new Color(35,35,35));
+        frame.setLayout(null);
 
         for(int i = 0; i < button.length; i++) {
-            button[i] = new JButton(String.valueOf(i));
+            button[i] = new JButton("");
             button[i].addActionListener(this);
             button[i].setFont(font);
         }
 
         panel = new JPanel();
         panel.setBounds(20,20,390,345);
-        panel.setBackground(new Color(5,6,7));
+        panel.setBackground(new Color(100,200,50));
         panel.setLayout(new GridLayout(3,3,2,2));
         
-        panel.add(button[0]);
-        panel.add(button[1]);
-        panel.add(button[2]);
-        panel.add(button[3]);
-        panel.add(button[4]);
-        panel.add(button[5]);
-        panel.add(button[6]);
-        panel.add(button[7]);
-        panel.add(button[8]);
+        for(int i = 0; i < 9; i++) {
+            panel.add(button[i]);
+        }
+
 
         frame.add(panel);
+        frame.setVisible(true);
     }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
         // TODO Auto-generated method stub
+        
+        for(int i = 0; i <= 8; i++) {
+            if(x%2==0 && e.getSource() == button[i]){
+                button[i].setText("X");
+            }
+            if(x%2!=0 && e.getSource() == button[i]){
+                button[i].setText("O");
+            }
+        }
+        this.x++;
+        
+
+
         throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
     }
 
 
     public static void main(String[] args){
-        System.out.println("Hello");
         new TicTacToe();
+        //
+        //create a function that checks if there are straight x's or o's
+
     }
 }
