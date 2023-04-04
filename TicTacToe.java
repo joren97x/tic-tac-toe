@@ -1,24 +1,33 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import javax.sound.sampled.*;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import java.util.Random;
 
 public class TicTacToe implements ActionListener {
 
     JFrame frame;
+    Clip clip;
     JLabel scoreboard, Xscore, Oscore, announcer, selectEnemyLabel, selectInputLabel;
     JButton[] button = new JButton[9];
     JPanel panel, menu, startingEnemy, startingInput;
     JButton[] menuButton = new JButton[2];
+    Random rand;
     JButton[] selectEnemyButton = new JButton[2];
     JButton[] selectInputButton = new JButton[2];
     Font font = new Font("Monospaced", Font.BOLD, 30);
     int x = 0; //this is to check if this num is even then the input should be X else O
-    int enemy = 0;
+    int enemy = 0; // to check if enemy is human or ai, 0 for human ; 1 for ai
+    String userInput = null;
 
     TicTacToe() {
 
@@ -26,6 +35,11 @@ public class TicTacToe implements ActionListener {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(450,550);
         frame.setLayout(null);
+
+        Image logo = Toolkit.getDefaultToolkit().getImage("logo.png");
+        frame.setIconImage(logo);
+
+        rand = new Random();
 
         scoreboard = new JLabel("scoreboard");
         scoreboard.setFont(font);
@@ -139,7 +153,42 @@ public class TicTacToe implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         // TODO Auto-generated method stub
 
+        selectMenu(e);
+        checkEnemy(e);
+        if(enemy ==0){
+            checkWinner();
+        }
+
+        throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
+    }
+    public void playSound(String filename) {
+        try {
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(new File(filename));
+            clip = AudioSystem.getClip();
+            clip.open(audioIn);
+            clip.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+            ex.printStackTrace();
+        }
+    }
+    public void selectMenu(ActionEvent e) {
+        
+        if(e.getSource() == menuButton[0]) {
+            for(int i = 0; i < 9; i++) {
+                button[i].setText("");
+            }
+            playSound("click.wav");
+            menu.setVisible(false);
+            panel.setVisible(true); 
+            announcer.setText("X's turn");
+        }
+
+        if(e.getSource() == menuButton[1]){
+            System.exit(0);
+        }
+
         if(e.getSource() == selectEnemyButton[0]){
+            playSound("click.wav");
             enemy = 0;
             startingEnemy.setVisible(false);
             selectEnemyLabel.setVisible(false);
@@ -148,6 +197,7 @@ public class TicTacToe implements ActionListener {
         }
 
         if(e.getSource() == selectEnemyButton[1]){
+            playSound("click.wav");
             enemy = 1;
             startingEnemy.setVisible(false);
             selectEnemyLabel.setVisible(false);
@@ -156,6 +206,7 @@ public class TicTacToe implements ActionListener {
         }
 
         if(e.getSource() == selectInputButton[0]){
+            playSound("click.wav");
             panel.setVisible(true);
             scoreboard.setVisible(true);
             announcer.setVisible(true);
@@ -166,8 +217,11 @@ public class TicTacToe implements ActionListener {
             startingInput.setVisible(false);
             selectEnemyLabel.setVisible(false);
             selectInputLabel.setVisible(false);
+            this.userInput = "X";
         }
+
         if(e.getSource() == selectInputButton[1]){
+            playSound("click.wav");
             this.x += 1;
             announcer.setText("O's turn");
             panel.setVisible(true);
@@ -180,7 +234,11 @@ public class TicTacToe implements ActionListener {
             startingInput.setVisible(false);
             selectEnemyLabel.setVisible(false);
             selectInputLabel.setVisible(false);
+            this.userInput = "O";
         }
+
+    }
+    public void checkEnemy(ActionEvent e) {
 
         if(enemy == 0) {
             for(int i = 0; i <= 8; i++) {
@@ -190,6 +248,7 @@ public class TicTacToe implements ActionListener {
                     }
                     else {
                         button[i].setText("X");
+                        playSound("click.wav");
                         this.x++;
                         announcer.setText("O's turn");
                     }
@@ -200,13 +259,14 @@ public class TicTacToe implements ActionListener {
                     }
                     else {
                         button[i].setText("O");
+                        playSound("click.wav");
                         this.x++;
                         announcer.setText("X's turn");
                     }
                 }
             }
         }
-
+        //IF ENEMY IS AI
         if(enemy == 1) {
             for(int i = 0; i <= 8; i++) {
                 if(x%2==0 && e.getSource() == button[i]){
@@ -215,8 +275,32 @@ public class TicTacToe implements ActionListener {
                     }
                     else {
                         button[i].setText("X");
+                        playSound("click.wav");
                         this.x++;
-                        announcer.setText("O's turn");
+                        announcer.setText("X's turn");
+                        //AI STUFFS
+                        checkWinner();
+                        if(this.x >= 9){
+                            break;
+                        }
+                        else if(x==0){
+                            break;
+                        }
+                        else if(x==1 && userInput == "O"){
+                            break;
+                        }
+                        int copyX = this.x;
+                        while(copyX == this.x) {
+                            int randNum = rand.nextInt(9);
+                            if(button[randNum].getText().equals("X") || button[randNum].getText().equals("O")) {
+                                //do nothing
+                            }
+                            else {
+                                button[randNum].setText("O");
+                                this.x++;
+                                checkWinner();
+                            }
+                        }
                     }
                 }
                 if(x%2!=0 && e.getSource() == button[i]){
@@ -225,32 +309,46 @@ public class TicTacToe implements ActionListener {
                     }
                     else {
                         button[i].setText("O");
+                        playSound("click.wav");
                         this.x++;
-                        announcer.setText("X's turn");
+                        announcer.setText("O's turn");
+                        //AI STUFFS
+                        checkWinner();
+                        if(this.x >= 9){
+                            break;
+                        }
+                        else if(x==0){
+                            break;
+                        }
+                        else if(x==1 && userInput == "O"){
+                            break;
+                        }
+                        int copyX = this.x;
+                        while(copyX == this.x) {
+                            int randNum = rand.nextInt(9);
+                            if(button[randNum].getText().equals("X") || button[randNum].getText().equals("O")) {
+                                //do nothing
+                            }
+                            else {
+                                button[randNum].setText("X");
+                                this.x++;
+                                checkWinner();
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+    public void checkWinner() {
 
-        if(e.getSource() == menuButton[0]) {
-            for(int i = 0; i < 9; i++) {
-                button[i].setText("");
-            }
-            menu.setVisible(false);
-            panel.setVisible(true); 
-            announcer.setText("X's turn");
-        }
-
-        if(e.getSource() == menuButton[1]){
-            System.exit(0);
-        }
-        
         if((button[0].getText()+button[3].getText().concat(button[6].getText())).equals("XXX")
         || (button[0].getText()+button[3].getText().concat(button[6].getText())).equals("OOO")) {
+            playSound("winner.wav");
             announcer.setText(button[0].getText()+" WINS!");
             panel.setVisible(false);
             menu.setVisible(true);
-            this.x = 0;
+            this.x = (userInput == "X" ? 0 : 1);
             if(button[0].getText().equals("X")){
                 int score = Character.getNumericValue(Xscore.getText().charAt(3));
                 score++;
@@ -264,10 +362,11 @@ public class TicTacToe implements ActionListener {
         }
         if((button[1].getText()+button[4].getText().concat(button[7].getText())).equals("XXX")
         || (button[1].getText()+button[4].getText().concat(button[7].getText())).equals("OOO")) {
+            playSound("winner.wav");
             announcer.setText(button[1].getText()+" WINS!");
             panel.setVisible(false);
             menu.setVisible(true);
-            this.x = 0;
+            this.x = (userInput == "X" ? 0 : 1);
             if(button[1].getText().equals("X")){
                 int score = Character.getNumericValue(Xscore.getText().charAt(3));
                 score++;
@@ -281,10 +380,11 @@ public class TicTacToe implements ActionListener {
         }
         if((button[2].getText()+button[5].getText().concat(button[8].getText())).equals("XXX")
         || (button[2].getText()+button[5].getText().concat(button[8].getText())).equals("OOO")) {
+            playSound("winner.wav");
             announcer.setText(button[2].getText()+" WINS!");
             panel.setVisible(false);
             menu.setVisible(true);
-            this.x = 0;
+            this.x = (userInput == "X" ? 0 : 1);
             if(button[2].getText().equals("X")){
                 int score = Character.getNumericValue(Xscore.getText().charAt(3));
                 score++;
@@ -298,10 +398,11 @@ public class TicTacToe implements ActionListener {
         }
         if((button[0].getText()+button[1].getText().concat(button[2].getText())).equals("XXX")
         || (button[0].getText()+button[1].getText().concat(button[2].getText())).equals("OOO")) {
+            playSound("winner.wav");
             announcer.setText(button[0].getText()+" WINS!");
             panel.setVisible(false);
             menu.setVisible(true);
-            this.x = 0;
+            this.x = (userInput == "X" ? 0 : 1);
             if(button[0].getText().equals("X")){
                 int score = Character.getNumericValue(Xscore.getText().charAt(3));
                 score++;
@@ -315,10 +416,11 @@ public class TicTacToe implements ActionListener {
         }
         if((button[3].getText()+button[4].getText().concat(button[5].getText())).equals("XXX")
         || (button[3].getText()+button[4].getText().concat(button[5].getText())).equals("OOO")) {
+            playSound("winner.wav");
             announcer.setText(button[3].getText()+" WINS!");
             panel.setVisible(false);
             menu.setVisible(true);
-            this.x = 0;
+            this.x = (userInput == "X" ? 0 : 1);
             if(button[3].getText().equals("X")){
                 int score = Character.getNumericValue(Xscore.getText().charAt(3));
                 score++;
@@ -332,10 +434,11 @@ public class TicTacToe implements ActionListener {
         }
         if((button[6].getText()+button[7].getText().concat(button[8].getText())).equals("XXX")
         || (button[6].getText()+button[7].getText().concat(button[8].getText())).equals("OOO")) {
+            playSound("winner.wav");
             announcer.setText(button[6].getText()+" WINS!");
             panel.setVisible(false);
             menu.setVisible(true);
-            this.x = 0;
+            this.x = (userInput == "X" ? 0 : 1);
             if(button[6].getText().equals("X")){
                 int score = Character.getNumericValue(Xscore.getText().charAt(3));
                 score++;
@@ -349,10 +452,11 @@ public class TicTacToe implements ActionListener {
         }
         if((button[0].getText()+button[4].getText().concat(button[8].getText())).equals("XXX")
         || (button[0].getText()+button[4].getText().concat(button[8].getText())).equals("OOO")) {
+            playSound("winner.wav");
             announcer.setText(button[0].getText()+" WINS!");
             panel.setVisible(false);
             menu.setVisible(true);
-            this.x = 0;
+            this.x = (userInput == "X" ? 0 : 1);
             if(button[0].getText().equals("X")){
                 int score = Character.getNumericValue(Xscore.getText().charAt(3));
                 score++;
@@ -366,10 +470,11 @@ public class TicTacToe implements ActionListener {
         }
         if((button[6].getText()+button[4].getText().concat(button[2].getText())).equals("XXX")
         || (button[6].getText()+button[4].getText().concat(button[2].getText())).equals("OOO")) {
+            playSound("winner.wav");
             announcer.setText(button[6].getText()+" WINS!");
             panel.setVisible(false);
             menu.setVisible(true);
-            this.x = 0;
+            this.x = (userInput == "X" ? 0 : 1);
             if(button[6].getText().equals("X")){
                 int score = Character.getNumericValue(Xscore.getText().charAt(3));
                 score++;
@@ -383,22 +488,20 @@ public class TicTacToe implements ActionListener {
         }
 
         if(this.x == 9){
+            playSound("winner.wav");
             announcer.setText("DRAW!");
             panel.setVisible(false);
             menu.setVisible(true);
-            this.x = 0;
+            this.x = (userInput == "X" ? 0 : 1);
         }
-        
-
-        throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
     }
     public static void main(String[] args){
         new TicTacToe();
-        //
         //create a function that checks if there are straight x's or o's == DONE!
         //add menu functionalities == DONE NA OI KASAYOn
         //fix scoreboard == DONE
-        //add AI enemy
+        //add AI enemy == kinda hard but still got it done :DDDDDDDDDD
+        //style UI and add logo 
 
     }
 }
